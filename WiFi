@@ -1,0 +1,55 @@
+#include <WiFi.h>
+#include <WebServer.h>
+
+const char* ssid = "WIFI;
+const char* password = "PASSWORD";
+const int ledPin = 15;  // GPIO for the LED
+
+WebServer server(80);
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(ledPin, OUTPUT);
+  
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.print("Connected to WiFi. IP address: ");
+  Serial.println(WiFi.localIP());
+
+  // Define routes
+  server.on("/", HTTP_GET, []() {
+    String html = "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'>";
+    html += "<title>ESP32 LED Control</title>";
+    html += "<style>body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }";
+    html += "button { padding: 15px 30px; font-size: 18px; margin: 10px; cursor: pointer; border: none; background-color: #4CAF50; color: white; border-radius: 5px; }";
+    html += "button:active { background-color: #45a049; }</style></head>";
+    html += "<body><h1>ESP32 LED Control</h1><p>Turn the LED on or off by clicking the buttons below:</p>";
+    html += "<button onclick=\"fetch('/led/on').then(response => response.text()).then(alert)\">Turn LED On</button>";
+    html += "<button onclick=\"fetch('/led/off').then(response => response.text()).then(alert)\">Turn LED Off</button>";
+    html += "</body></html>";
+    server.send(200, "text/html", html);
+  });
+
+  server.on("/led/on", HTTP_GET, []() {
+    digitalWrite(ledPin, HIGH);  // Turn the LED on
+    server.send(200, "text/plain", "LED On");
+    Serial.println("LED turned ON");
+  });
+
+  server.on("/led/off", HTTP_GET, []() {
+    digitalWrite(ledPin, LOW);  // Turn the LED off
+    server.send(200, "text/plain", "LED Off");
+    Serial.println("LED turned OFF");
+  });
+
+  server.begin();
+}
+
+void loop() {
+  server.handleClient();
+} 
