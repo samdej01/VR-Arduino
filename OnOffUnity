@@ -1,0 +1,34 @@
+using UnityEngine;
+using System.IO.Ports;
+
+public class ArduinoLightControl : MonoBehaviour
+{
+    SerialPort sp = new SerialPort("COM5", 9600); // Change COM3 to your Arduino port
+    bool lightOn = false;
+
+    void Start()
+    {
+        if (!sp.IsOpen)
+        {
+            sp.Open();
+            sp.DtrEnable = true;
+        }
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            lightOn = !lightOn;
+            sp.Write(lightOn ? "1" : "0");
+        }
+    }
+
+    void OnApplicationQuit()
+    {
+        if (sp.IsOpen)
+        {
+            sp.Close();
+        }
+    }
+}
