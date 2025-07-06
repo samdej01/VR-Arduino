@@ -1,0 +1,21 @@
+int ledPin =11; // PWM pin connected to LED
+String inputString = ""; // Store serial input
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  while (Serial.available()) {
+    char inChar = (char)Serial.read();
+    if (inChar == '\n') {
+      int brightness = inputString.toInt(); // Convert string to int
+      brightness = constrain(brightness, 0, 255); // Ensure within 0–255
+      analogWrite(ledPin, brightness);
+      inputString = ""; // Clear after use
+    } else {
+      inputString += inChar;
+    }
+  }
+}
