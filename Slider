@@ -1,0 +1,32 @@
+using UnityEngine;
+using UnityEngine.UI;
+using System.IO.Ports;
+
+public class ArduinoSliderControl : MonoBehaviour
+{
+    public Slider brightnessSlider;
+    private SerialPort sp = new SerialPort("COM5", 9600); // Replace with your COM port
+
+    void Start()
+    {
+        if (!sp.IsOpen)
+        {
+            sp.Open();
+            sp.DtrEnable = true;
+        }
+
+        brightnessSlider.onValueChanged.AddListener(OnSliderValueChanged);
+    }
+
+    void OnSliderValueChanged(float value)
+    {
+        int brightness = Mathf.RoundToInt(value * 255f); // Convert slider (0-1) to 0–255
+        sp.WriteLine(brightness.ToString());
+    }
+
+    void OnApplicationQuit()
+    {
+        if (sp.IsOpen)
+            sp.Close();
+    }
+}
