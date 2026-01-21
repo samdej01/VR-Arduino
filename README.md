@@ -1,5 +1,5 @@
 # VR Arduino
-Interactive VR Arduino Technology
+Interactive VR Arduino Technology 🚀 
 
 ## Overview
 This repository showcases an interactive experience developed during the **"Interactive Journey into Emerging Technologies"** workshop, part of the Tuwaiq Talk series. The project combines **Virtual Reality (VR)** with **Arduino Uno** to demonstrate how emerging technologies can be integrated to create innovative, hands-on tech experiences.
